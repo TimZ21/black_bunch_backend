@@ -1,0 +1,12 @@
+services:
+  tensorflow:
+    image: tensorflow/tensorflow
+
+    tty: true
+
+    stdin_open: true
+
+    # entrypoint: /bin/bash
+
+    volumes:
+      - ./tf_model:/app/model
