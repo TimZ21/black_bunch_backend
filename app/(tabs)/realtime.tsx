@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { Alert, View, Image, Text, Button, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import { Alert, View, Image, Text, Button, SafeAreaView, Dimensions } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import { decodeJpeg } from '@tensorflow/tfjs-react-native';
@@ -8,20 +8,14 @@ import { Asset } from 'expo-asset';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as B64toAB from 'base64-arraybuffer';
 import Svg, { Rect, Text as SVGText } from "react-native-svg";
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 
 let model: tf.GraphModel;
 
-export default function CameraScreen() {
-  const router = useRouter();
+export default function GalleryScreen() {
   const [imageUri, setImageUri] = useState("");
   const [detections, setDetections] = useState<number[][]>([]);
-  const [camera, setCamera] = useState(true);
   const [modelLoaded, setModelLoaded] = useState(0);
   const [timeTaken, setTimeTaken] = useState(0);
-
-  const isCameraPage = true; // Indicates the current page is the camera page
 
   useEffect(() => {
     const loadModel = async () => {
@@ -77,7 +71,7 @@ export default function CameraScreen() {
     loadModel();
   }, []);
 
-  const openCamera = async () => {
+  const openGallery = async () => {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let waitTime = 0;
 
@@ -90,14 +84,18 @@ export default function CameraScreen() {
         break;
     }
 
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'You need to grant camera access to use this feature.');
+      Alert.alert('Permission Required', 'You need to grant gallery access to use this feature.');
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, quality: 1 });
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
     setDetections([]);
     setTimeTaken(0);
@@ -151,18 +149,9 @@ export default function CameraScreen() {
 
       console.log('Loading image to be processed');
 
-      let jpegLocalFilePath = uri;
-
-      if (!camera) {
-        // Load image
-        const jpegAsset = Asset.fromModule(require('../../assets/models/test.jpeg'));
-        jpegLocalFilePath = `${FileSystem.cacheDirectory}test.jpeg`;
-        await FileSystem.downloadAsync(jpegAsset.uri, jpegLocalFilePath);
-      }
-
       // Resize image
       const resizedJpeg = await ImageManipulator.manipulateAsync(
-        jpegLocalFilePath,
+        uri,
         [{ resize: { width: 640, height: 640 } }], // Resize to model input size
         { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
       );
@@ -274,16 +263,9 @@ export default function CameraScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Content */}
-      <View style={styles.topContent}>
-        <Text style={styles.header}>Camera</Text>
-        <Text style={styles.subHeader}>Capture and detect objects in real-time.</Text>
-      </View>
-
-      {/* Middle Content */}
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        {modelLoaded == 1 && <Button title="Open Camera" onPress={openCamera} />}
+    <SafeAreaView>
+      <View>
+        {modelLoaded == 1 && <Button title="Open Gallery" onPress={openGallery} />}
         {detections.length > 0 && <Button title="Save Image" onPress={() => console.log('Save function here')} />}
         {timeTaken <= 0 && modelLoaded == 0 && <Text>Loading Model ...... </Text>}
         {timeTaken <= 0 && modelLoaded == 1 && imageUri != "" && <Text>Detecting Objects ...... </Text>}
@@ -292,74 +274,6 @@ export default function CameraScreen() {
         {timeTaken > 0 && <Text>Time Taken: {timeTaken}</Text>}
         {(imageUri != "") && <ImageWithBoundingBoxes imageUri={imageUri} boxes={detections}></ImageWithBoundingBoxes>}
       </View>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/gallery')}>
-          <Ionicons name="images-outline" size={24} color="white" />
-          <Text style={styles.navText}>Gallery</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.navButton, isCameraPage && styles.disabledButton]}
-          onPress={() => router.push('/camera')}
-          disabled={isCameraPage}
-        >
-          <Ionicons name="camera-outline" size={24} color={isCameraPage ? '#ccc' : 'black'} />
-          <Text style={[styles.navText, isCameraPage && styles.disabledText]}>Camera</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/realtime')}>
-          <Ionicons name="videocam-outline" size={24} color="white" />
-          <Text style={styles.navText}>Real Time</Text>
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#e3fdfb',
-  },
-  topContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 20,
-  },
-  header: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 10,
-  },
-  subHeader: {
-    fontSize: 18,
-    color: '#000',
-    marginBottom: 30,
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 70,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#2fa69d',
-  },
-  navButton: {
-    alignItems: 'center',
-  },
-  navText: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginTop: 5,
-  },
-  disabledButton: {
-    opacity: 0.5, // Reduce opacity to indicate the button is disabled
-  },
-  disabledText: {
-    color: '#ccc', // Change text color to indicate the button is disabled
-  },
-});

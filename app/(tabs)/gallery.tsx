@@ -13,15 +13,14 @@ import { Ionicons } from '@expo/vector-icons';
 
 let model: tf.GraphModel;
 
-export default function CameraScreen() {
+export default function GalleryScreen() {
   const router = useRouter();
   const [imageUri, setImageUri] = useState("");
   const [detections, setDetections] = useState<number[][]>([]);
-  const [camera, setCamera] = useState(true);
   const [modelLoaded, setModelLoaded] = useState(0);
   const [timeTaken, setTimeTaken] = useState(0);
 
-  const isCameraPage = true; // Indicates the current page is the camera page
+  const isGalleryPage = true; // Indicates the current page is the gallery page
 
   useEffect(() => {
     const loadModel = async () => {
@@ -77,7 +76,7 @@ export default function CameraScreen() {
     loadModel();
   }, []);
 
-  const openCamera = async () => {
+  const openGallery = async () => {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let waitTime = 0;
 
@@ -90,14 +89,18 @@ export default function CameraScreen() {
         break;
     }
 
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
-      Alert.alert('Permission Required', 'You need to grant camera access to use this feature.');
+      Alert.alert('Permission Required', 'You need to grant gallery access to use this feature.');
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, quality: 1 });
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
     setDetections([]);
     setTimeTaken(0);
@@ -151,18 +154,9 @@ export default function CameraScreen() {
 
       console.log('Loading image to be processed');
 
-      let jpegLocalFilePath = uri;
-
-      if (!camera) {
-        // Load image
-        const jpegAsset = Asset.fromModule(require('../../assets/models/test.jpeg'));
-        jpegLocalFilePath = `${FileSystem.cacheDirectory}test.jpeg`;
-        await FileSystem.downloadAsync(jpegAsset.uri, jpegLocalFilePath);
-      }
-
       // Resize image
       const resizedJpeg = await ImageManipulator.manipulateAsync(
-        jpegLocalFilePath,
+        uri,
         [{ resize: { width: 640, height: 640 } }], // Resize to model input size
         { compress: 1, format: ImageManipulator.SaveFormat.JPEG }
       );
@@ -277,13 +271,13 @@ export default function CameraScreen() {
     <SafeAreaView style={styles.container}>
       {/* Top Content */}
       <View style={styles.topContent}>
-        <Text style={styles.header}>Camera</Text>
-        <Text style={styles.subHeader}>Capture and detect objects in real-time.</Text>
+        <Text style={styles.header}>Album</Text>
+        <Text style={styles.subHeader}>No images processed yet.</Text>
       </View>
 
       {/* Middle Content */}
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        {modelLoaded == 1 && <Button title="Open Camera" onPress={openCamera} />}
+        {modelLoaded == 1 && <Button title="Open Gallery" onPress={openGallery} />}
         {detections.length > 0 && <Button title="Save Image" onPress={() => console.log('Save function here')} />}
         {timeTaken <= 0 && modelLoaded == 0 && <Text>Loading Model ...... </Text>}
         {timeTaken <= 0 && modelLoaded == 1 && imageUri != "" && <Text>Detecting Objects ...... </Text>}
@@ -295,18 +289,18 @@ export default function CameraScreen() {
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/gallery')}>
-          <Ionicons name="images-outline" size={24} color="white" />
-          <Text style={styles.navText}>Gallery</Text>
+        <TouchableOpacity
+          style={[styles.navButton, isGalleryPage && styles.disabledButton]}
+          onPress={() => router.push('/gallery')}
+          disabled={isGalleryPage}
+        >
+          <Ionicons name="images-outline" size={24} color={isGalleryPage ? '#ccc' : 'black'} />
+          <Text style={[styles.navText, isGalleryPage && styles.disabledText]}>Gallery</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.navButton, isCameraPage && styles.disabledButton]}
-          onPress={() => router.push('/camera')}
-          disabled={isCameraPage}
-        >
-          <Ionicons name="camera-outline" size={24} color={isCameraPage ? '#ccc' : 'black'} />
-          <Text style={[styles.navText, isCameraPage && styles.disabledText]}>Camera</Text>
+        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/camera')}>
+          <Ionicons name="camera-outline" size={24} color="white" />
+          <Text style={styles.navText}>Camera</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton} onPress={() => router.push('/realtime')}>
