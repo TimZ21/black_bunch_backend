@@ -318,7 +318,7 @@ export default function GalleryScreen() {
       <SafeAreaView style={styles.container}>
         {/* Top Content */}
         <View style={styles.topContent}>
-          <Text style={styles.header}>Gallery</Text>
+          <Text style={styles.header}>Upload</Text>
           <Text style={styles.subHeader}>Select an image to detect palm fruits</Text>
 
           {timeTaken > 0 && (
@@ -398,11 +398,11 @@ export default function GalleryScreen() {
       <View style={styles.bottomNav}>
         <TouchableOpacity
           style={[styles.navButton, isGalleryPage && styles.disabledButton]}
-          onPress={() => router.push('/gallery')}
+          onPress={() => router.push('/upload')}
           disabled={isGalleryPage}
         >
           <Ionicons name="images-outline" size={24} color={isGalleryPage ? '#ccc' : 'black'} />
-          <Text style={[styles.navText, isGalleryPage && styles.disabledText]}>Gallery</Text>
+          <Text style={[styles.navText, isGalleryPage && styles.disabledText]}>Upload</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton} onPress={() => router.push('/camera')} enabled>

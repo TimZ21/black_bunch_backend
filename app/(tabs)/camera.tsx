@@ -401,9 +401,9 @@ export default function CameraScreen() {
 
         {/* Bottom Navigation */}
         <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push('/gallery')} enabled>
+          <TouchableOpacity style={styles.navButton} onPress={() => router.push('/upload')} enabled>
               <Ionicons name="image-outline" size={24} color="white" />
-              <Text style={styles.navText}>Gallery</Text>
+              <Text style={styles.navText}>Upload</Text>
           </TouchableOpacity>
 
           <TouchableOpacity

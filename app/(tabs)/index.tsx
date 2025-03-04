@@ -20,7 +20,7 @@ const HomeScreen: React.FC = () => {
         <Text style={styles.description}>anytime, anywhere</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/gallery')} // Navigate to another page
+          onPress={() => router.push('/upload')} // Navigate to another page
         >
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
