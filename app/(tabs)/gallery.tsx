@@ -1,6 +1,6 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Alert, View, Image, Text, Button, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
-import React, { useState, useEffect } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import { decodeJpeg } from '@tensorflow/tfjs-react-native';
 import * as FileSystem from 'expo-file-system';
@@ -10,6 +10,7 @@ import * as B64toAB from 'base64-arraybuffer';
 import Svg, { Rect, Text as SVGText } from "react-native-svg";
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as MediaLibrary from 'expo-media-library';
 
 let model: tf.GraphModel;
 
@@ -21,6 +22,13 @@ export default function GalleryScreen() {
   const [timeTaken, setTimeTaken] = useState(0);
 
   const isGalleryPage = true; // Indicates the current page is the gallery page
+
+  // Function to reset everything
+  const resetState = () => {
+      setImageUri("");
+      setDetections([]);
+      setTimeTaken(0);
+  };
 
   useEffect(() => {
     const loadModel = async () => {
@@ -52,7 +60,7 @@ export default function GalleryScreen() {
         });
         const modelBinArrayBuffer = B64toAB.decode(modelBinB64);
 
-        // Load model details into ModelArtifact 
+        // Load model details into ModelArtifact
         const modelArtifacts = {
           modelTopology: modelJson.modelTopology, // The network architecture
           weightSpecs: modelJson.weightsManifest[0].weights, // Weight descriptions
@@ -88,7 +96,6 @@ export default function GalleryScreen() {
       if (waitTime > 120000)
         break;
     }
-
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
@@ -96,19 +103,21 @@ export default function GalleryScreen() {
       return;
     }
 
+    setTimeTaken(0);
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
     });
 
-    setDetections([]);
-    setTimeTaken(0);
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-      await processImage(result.assets[0].uri);
+    if (result.canceled) {
+      resetState(); // Reset everything if canceled
+      return;
     }
+
+    resetState();
+    setImageUri(result.assets[0].uri);
+    await processImage(result.assets[0].uri);
   };
 
   const computeIoU = (detection1: number[], detection2: number[]) => {
@@ -133,6 +142,7 @@ export default function GalleryScreen() {
   };
 
   const processImage = async (uri) => {
+   startSpinning();
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let waitTime = 0;
 
@@ -267,25 +277,122 @@ export default function GalleryScreen() {
     );
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Content */}
-      <View style={styles.topContent}>
-        <Text style={styles.header}>Album</Text>
-        <Text style={styles.subHeader}>No images processed yet.</Text>
-      </View>
+  const saveImageToGallery = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
 
-      {/* Middle Content */}
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        {modelLoaded == 1 && <Button title="Open Gallery" onPress={openGallery} />}
-        {detections.length > 0 && <Button title="Save Image" onPress={() => console.log('Save function here')} />}
-        {timeTaken <= 0 && modelLoaded == 0 && <Text>Loading Model ...... </Text>}
-        {timeTaken <= 0 && modelLoaded == 1 && imageUri != "" && <Text>Detecting Objects ...... </Text>}
-        {timeTaken <= 0 && modelLoaded == 1 && imageUri == "" && <Text>Ready to Detect Objects ...... </Text>}
-        {timeTaken > 0 && <Text>Objects Detected: {detections.length}</Text>}
-        {timeTaken > 0 && <Text>Time Taken: {timeTaken}</Text>}
-        {(imageUri != "") && <ImageWithBoundingBoxes imageUri={imageUri} boxes={detections}></ImageWithBoundingBoxes>}
-      </View>
+      if (status !== 'granted') {
+          Alert.alert('Permission Denied', 'You need to grant permission to save images to your gallery.');
+          return;
+      }
+
+      try {
+          await MediaLibrary.saveToLibraryAsync(imageUri);
+          Alert.alert('Saved', 'Image saved to gallery!');
+      } catch (error) {
+          Alert.alert('Error', 'Failed to save image');
+          console.error('Failed to save image:', error);
+      }
+  };
+
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  const startSpinning = () => {
+      spinValue.setValue(0);
+      Animated.loop(
+          Animated.timing(spinValue, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+          })
+      ).start();
+  };
+
+
+  const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg']
+  });
+
+
+  return (
+      <SafeAreaView style={styles.container}>
+        {/* Top Content */}
+        <View style={styles.topContent}>
+          <Text style={styles.header}>Gallery</Text>
+          <Text style={styles.subHeader}>Select an image to detect palm fruits</Text>
+
+          {timeTaken > 0 && (
+            <View style={styles.resultsContainer}>
+              {detections.length === 0 ? (
+                <Ionicons name="alert-circle-outline" size={55} color="#ff4d4d" />
+              ) : (
+                <Ionicons name="checkmark-circle-outline" size={55} color="#4CAF50" />
+              )}
+              <View style={styles.resultsTextContainer}>
+                {detections.length === 0 ? (
+                  <Text style={[styles.detectionText, { color: "#ff4d4d" }]}>Not Detected</Text>
+                ) : (
+                  <Text style={[styles.detectionText, { color: "#4CAF50" }]}>Detected</Text>
+                )}
+                <Text style={styles.resultsText}>Objects Detected: {detections.length}</Text>
+                <Text style={styles.resultsText}>Time Taken: {timeTaken} ms</Text>
+              </View>
+            </View>
+          )}
+        </View>
+
+        {/* Middle Content */}
+        <View style={styles.middleContent}>
+          {modelLoaded === 1 && imageUri === "" && (
+            <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
+              <Ionicons name="image-outline" size={60} color="#2fa69d" />
+              <Text style={styles.galleryButtonText}>Open Gallery</Text>
+            </TouchableOpacity>
+          )}
+
+          {timeTaken <= 0 && modelLoaded === 0 && <Text style={styles.loadingText}>Loading Model ...... </Text>}
+
+          {timeTaken <= 0 && modelLoaded === 1 && imageUri !== "" && (
+            <View style={styles.detectingContainer}>
+              <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                <Ionicons name="sync-circle-outline" size={50} color="#2fa69d" />
+              </Animated.View>
+              <Text style={styles.detectingText}>Detecting Palm Fruits...</Text>
+            </View>
+          )}
+
+          {timeTaken <= 0 && modelLoaded === 1 && imageUri === "" && <Text style={styles.loadingText}>Ready to Detect Objects</Text>}
+
+          {imageUri !== "" && (
+            <>
+              <ImageWithBoundingBoxes imageUri={imageUri} boxes={detections} />
+
+              {detections.length === 0 && timeTaken > 0 && (
+                <View style={styles.noResultContainer}>
+                  <Text style={styles.tryAnotherText}>Please try uploading a clearer image.</Text>
+                  <TouchableOpacity style={styles.reuploadButton} onPress={openGallery}>
+                    <Ionicons name="image-outline" size={20} color="#fff" />
+                    <Text style={styles.reuploadButtonText}>UPLOAD</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
+          )}
+        </View>
+
+        {detections.length > 0 && (
+          <View style={styles.bottomActionContainer}>
+            <TouchableOpacity style={styles.saveButton} onPress={saveImageToGallery}>
+              <Ionicons name="save-outline" size={20} color="white" />
+              <Text style={styles.saveButtonText}>SAVE IMAGE</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.reuploadButton} onPress={openGallery}>
+              <Ionicons name="image-outline" size={20} color="#fff" />
+              <Text style={styles.reuploadButtonText}>UPLOAD</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
@@ -298,12 +405,12 @@ export default function GalleryScreen() {
           <Text style={[styles.navText, isGalleryPage && styles.disabledText]}>Gallery</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/camera')}>
+        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/camera')} enabled>
           <Ionicons name="camera-outline" size={24} color="white" />
           <Text style={styles.navText}>Camera</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/realtime')}>
+        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/realtime')} enabled>
           <Ionicons name="videocam-outline" size={24} color="white" />
           <Text style={styles.navText}>Real Time</Text>
         </TouchableOpacity>
@@ -318,7 +425,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#e3fdfb',
   },
   topContent: {
-    justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 20,
   },
@@ -326,13 +432,81 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 10,
   },
   subHeader: {
     fontSize: 18,
     color: '#000',
-    marginBottom: 30,
+    marginTop: 5,
   },
+  middleContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  galleryButton: {
+    alignItems: 'center',
+    padding: 20,
+    borderWidth: 2,
+    borderColor: '#2fa69d',
+    borderRadius: 10,
+  },
+  galleryButtonText: {
+    fontSize: 18,
+    color: '#2fa69d',
+    marginTop: 10,
+  },
+
+  saveButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#ff6f61',
+      paddingVertical: 10,
+      paddingHorizontal: 18,
+      borderRadius: 8,
+      shadowColor: '#ff3b2f',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 3,
+      elevation: 3,
+  },
+  saveButtonText: {
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: 'bold',
+      marginLeft: 6,
+  },
+
+  loadingText: {
+      fontSize: 16,
+      color: '#000',
+      marginBottom: 20,
+      fontWeight: '500',
+      marginTop: 50,
+  },
+
+  resultsContainer: {
+      flexDirection: 'row',  // Align icon and text side by side
+      alignItems: 'center',  // Center vertically
+      marginTop: 15,
+      backgroundColor: '#fff',
+      padding: 20,
+      borderRadius: 10,
+      marginBottom: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
+      elevation: 5,
+    },
+
+    resultText: {
+      marginTop: 10,
+      fontSize: 20,
+      fontWeight: '500',
+    },
+
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -356,4 +530,92 @@ const styles = StyleSheet.create({
   disabledText: {
     color: '#ccc', // Change text color to indicate the button is disabled
   },
+
+  noResultContainer: {
+      alignItems: 'center',
+      padding: 10,
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 2,
+      marginBottom: 15,
+  },
+
+  detectionText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+  },
+
+  tryAnotherText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 10,
+    lineHeight: 22,
+  },
+
+  reuploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2fa69d',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    shadowColor: '#ff3b2f',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+
+  reuploadButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginLeft: 6,
+  },
+
+  detectedResultContainer: {
+      alignItems: 'center',
+  },
+
+  bottomActionContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      paddingVertical: 10,
+      marginBottom: 30,
+  },
+
+  detectingContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 20,
+      padding: 20,
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 5,
+      gap: 12,  // Space between spinner and text
+  },
+
+  detectingText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#2fa69d',
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+  },
+
+
+
+
 });

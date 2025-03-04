@@ -15,12 +15,9 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~3.2.3",
+    "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-navigation/native": "^6.0.2",
-    "@tensorflow/tfjs": "3.8.0",
-    "@tensorflow/tfjs-react-native": "0.8.0",
     "base64-arraybuffer": "^1.0.2",
     "expo": "^52.0.0",
     "expo-asset": "~11.0.4",
@@ -31,7 +28,9 @@
     "expo-gl": "^15.0.4",
     "expo-image-manipulator": "~13.0.5",
     "expo-image-picker": "~16.0.6",
+    "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.5",
+    "expo-media-library": "~17.0.0",
     "expo-router": "~4.0.17",
     "expo-splash-screen": "~0.29.21",
     "expo-status-bar": "~2.0.1",
@@ -45,8 +44,11 @@
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
-    "react-native-svg": "^15.8.0",
-    "react-native-web": "~0.19.10"
+    "react-native-svg": "15.8.0",
+    "react-native-web": "~0.19.10",
+    "@tensorflow/tfjs": "^4.15.0",
+    "@tensorflow/tfjs-react-native": "^0.8.0",
+    "@react-native-async-storage/async-storage": "1.23.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
