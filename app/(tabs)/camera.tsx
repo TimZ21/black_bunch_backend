@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import ViewShot from "react-native-view-shot";
 import * as tf from '@tensorflow/tfjs';
 import { decodeJpeg } from '@tensorflow/tfjs-react-native';
 import * as FileSystem from 'expo-file-system';
@@ -238,68 +239,70 @@ export default function CameraScreen() {
     }
   };
 
-  const ImageWithBoundingBoxes = ({ imageUri, boxes }) => {
-    const { width: widthHeight } = Dimensions.get("window"); // Screen size
+    const viewShotRef = useRef(null);
 
-    return (
-      <View style={{ flex: 1 }}>
-        {/* Display Image */}
-        <Image source={{ uri: imageUri }} style={{ width: widthHeight, height: widthHeight }} resizeMode="contain" />
+    const ImageWithBoundingBoxes = ({ imageUri, boxes }) => {
+      const { width: widthHeight } = Dimensions.get("window"); // Screen size
 
-        {/* Draw Bounding Boxes */}
-        {detections.length > 0 &&
-          <Svg style={{ position: "absolute", top: 0, left: 0, width: widthHeight, height: widthHeight }}>
-            {boxes.map((box: number[], index: number) => {
-              let [xStart, xEnd, yStart, yEnd, confidence, label] = box;
-              xStart = xStart / 640 * widthHeight;
-              xEnd = xEnd / 640 * widthHeight;
-              yStart = yStart / 640 * widthHeight;
-              yEnd = yEnd / 640 * widthHeight;
-
-              let width = xEnd - xStart;
-              let height = yEnd - yStart;
-
-              return (
-                <React.Fragment key={index}>
-                  {/* Bounding Box */}
-                  <Rect
-                    x={xStart}
-                    y={yStart}
-                    width={width}
-                    height={height}
-                    stroke="red"
-                    strokeWidth="2"
-                    fill="transparent"
-                  />
-                  {/* Label */}
-                  <SVGText x={xStart} y={yStart - 5} fill="red" fontSize="14">
-                    {`Black Bunch (${(confidence * 100).toFixed(1)}%)`}
-                  </SVGText>
-                </React.Fragment>
-              );
-            })}
-          </Svg>
+        if (boxes.length === 0) {
+          // Render only the image if no bounding boxes
+          return (
+            <Image source={{ uri: imageUri }} style={{ width: widthHeight, height: widthHeight }} resizeMode="contain" />
+          );
         }
-      </View>
-    );
-  };
+        else {
+            return (
+                  <ViewShot ref={viewShotRef} options={{ format: "jpg", quality: 1 }}>
+                    <View style={{ flex: 1 }}>
+                      {/* Display Image */}
+                      <Image source={{ uri: imageUri }} style={{ width: widthHeight, height: widthHeight }} resizeMode="contain" />
 
-  const saveImageToGallery = async () => {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
+                      {/* Draw Bounding Boxes */}
+                      <Svg style={{ position: "absolute", top: 0, left: 0, width: widthHeight, height: widthHeight }}>
+                        {boxes.map((box: number[], index: number) => {
+                          let [xStart, xEnd, yStart, yEnd, confidence] = box;
+                          xStart = (xStart / 640) * widthHeight;
+                          xEnd = (xEnd / 640) * widthHeight;
+                          yStart = (yStart / 640) * widthHeight;
+                          yEnd = (yEnd / 640) * widthHeight;
 
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'You need to grant permission to save images to your gallery.');
-      return;
-    }
+                          let width = xEnd - xStart;
+                          let height = yEnd - yStart;
 
-    try {
-      await MediaLibrary.saveToLibraryAsync(imageUri);
-      Alert.alert('Saved', 'Image saved to gallery!');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save image');
-      console.error('Failed to save image:', error);
-    }
-  };
+                          return (
+                            <React.Fragment key={index}>
+                              {/* Bounding Box */}
+                              <Rect x={xStart} y={yStart} width={width} height={height} stroke="red" strokeWidth="2" fill="transparent" />
+                              {/* Label */}
+                              <SVGText x={xStart} y={yStart - 5} fill="red" fontSize="14">
+                                Black Bunch ({(confidence * 100).toFixed(1)}%)
+                              </SVGText>
+                            </React.Fragment>
+                          );
+                        })}
+                      </Svg>
+                    </View>
+                  </ViewShot>
+                );
+              };
+            }
+
+    const saveImageToGallery = async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'You need to grant permission to save images to your gallery.');
+        return;
+      }
+
+      try {
+        const uri = await viewShotRef.current.capture();
+        await MediaLibrary.saveToLibraryAsync(uri);
+        Alert.alert('Saved', 'Image with bounding boxes saved to gallery!');
+      } catch (error) {
+        Alert.alert('Error', 'Failed to save image');
+        console.error('Failed to save image:', error);
+      }
+    };
 
   const spinValue = useRef(new Animated.Value(0)).current;
 

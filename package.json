@@ -17,7 +17,11 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/native": "^6.0.2",
+    "@tensorflow/tfjs": "^4.15.0",
+    "@tensorflow/tfjs-backend-cpu": "^4.22.0",
+    "@tensorflow/tfjs-react-native": "^0.8.0",
     "base64-arraybuffer": "^1.0.2",
     "expo": "^52.0.0",
     "expo-asset": "~11.0.4",
@@ -45,10 +49,8 @@
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-svg": "15.8.0",
-    "react-native-web": "~0.19.10",
-    "@tensorflow/tfjs": "^4.15.0",
-    "@tensorflow/tfjs-react-native": "^0.8.0",
-    "@react-native-async-storage/async-storage": "1.23.1"
+    "react-native-view-shot": "^4.0.3",
+    "react-native-web": "~0.19.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

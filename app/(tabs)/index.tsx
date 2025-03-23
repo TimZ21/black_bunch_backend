@@ -10,12 +10,12 @@ const HomeScreen: React.FC = () => {
       <View style={styles.content}>
         {/* Add the logo image */}
         <Image
-          source={require('../../assets/images/logo.png')} // Adjust the path to your logo.png
+          source={require('../../assets/images/AgriVisionLogo-noBG.png')} // Adjust the path to your logo.png
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={styles.title}>Real Time Black</Text>
-        <Text style={styles.subtitle}>Bunches Detection</Text>
+        <Text style={styles.title}></Text>
+        <Text style={styles.subtitle}>Black Bunch Detection</Text>
         <Text style={styles.description}>Make informed harvest decisions</Text>
         <Text style={styles.description}>anytime, anywhere</Text>
         <TouchableOpacity
