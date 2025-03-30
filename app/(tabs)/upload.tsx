@@ -355,7 +355,7 @@ export default function GalleryScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.navButton} onPress={() => router.push('/setting')} enabled>
-          <Ionicons name="videocam-outline" size={24} color="white" />
+          <Ionicons name="settings-outline" size={24} color="white" />
           <Text style={styles.navText}>Setting</Text>
         </TouchableOpacity>
       </View>

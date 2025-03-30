@@ -14,8 +14,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
 import { getModel, loadModel } from './modelLoader';
 
-let model: tf.GraphModel;
-
 export default function CameraScreen() {
   const router = useRouter();
   const [imageUri, setImageUri] = useState("");
@@ -361,12 +359,12 @@ export default function CameraScreen() {
               style={[styles.navButton, isCameraPage && styles.disabledButton]}
               onPress={() => router.push('/camera')}
               disabled={isCameraPage}>
-              <Ionicons name="images-outline" size={24} color={isCameraPage ? '#ccc' : 'black'} />
+              <Ionicons name="camera-outline" size={24} color={isCameraPage ? '#ccc' : 'black'} />
               <Text style={[styles.navText, isCameraPage && styles.disabledText]}>Camera</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navButton} onPress={() => router.push('/setting')} enabled>
-            <Ionicons name="videocam-outline" size={24} color="white" />
+            <Ionicons name="settings-outline" size={24} color="white" />
             <Text style={styles.navText}>Setting</Text>
           </TouchableOpacity>
         </View>

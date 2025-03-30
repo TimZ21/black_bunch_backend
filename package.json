@@ -18,6 +18,8 @@
     "@expo/metro-runtime": "~4.0.1",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-community/slider": "^4.5.6",
+    "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/native": "^6.0.2",
     "@tensorflow/tfjs": "^4.15.0",
     "@tensorflow/tfjs-backend-cpu": "^4.22.0",
