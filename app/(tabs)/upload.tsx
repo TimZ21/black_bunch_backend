@@ -5,21 +5,20 @@ import ViewShot from "react-native-view-shot";
 import * as tf from '@tensorflow/tfjs';
 import { decodeJpeg } from '@tensorflow/tfjs-react-native';
 import * as FileSystem from 'expo-file-system';
-import { Asset } from 'expo-asset';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as B64toAB from 'base64-arraybuffer';
 import Svg, { Rect, Text as SVGText } from "react-native-svg";
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
+import { getModel, loadModel } from './modelLoader';
 
-let model: tf.GraphModel;
 
 export default function GalleryScreen() {
   const router = useRouter();
   const [imageUri, setImageUri] = useState("");
   const [detections, setDetections] = useState<number[][]>([]);
-  const [modelLoaded, setModelLoaded] = useState(0);
+  const [modelReady, setModelReady] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
 
   const isGalleryPage = true; // Indicates the current page is the gallery page
@@ -31,71 +30,27 @@ export default function GalleryScreen() {
       setTimeTaken(0);
   };
 
+  const model = getModel();
+
   useEffect(() => {
-    const loadModel = async () => {
+    const checkModel = async () => {
       try {
-        await tf.ready(); // Ensure TensorFlow.js is initialized
-        console.log("TensorFlow Ready");
-
-        // Load model asset
-        const jsonAsset = JSON.stringify(require('../../assets/models/model.json'), null, 2);
-        const binAsset = Asset.fromModule(require('../../assets/models/group1-shard1of1.bin'));
-
-        // Create a local file path to save the downloaded file
-        const jsonLocalFilePath = `${FileSystem.cacheDirectory}model.json`;
-        const binLocalFilePath = `${FileSystem.cacheDirectory}shard1of1.bin`;
-
-        // Download the file from the remote URL to the local file path
-        await FileSystem.writeAsStringAsync(jsonLocalFilePath, jsonAsset, {
-          encoding: FileSystem.EncodingType.UTF8,
-        });
-        await FileSystem.downloadAsync(binAsset.uri, binLocalFilePath);
-
-        console.log("Model File Loaded");
-
-        // Load the Json and Bin file into necessary format for model
-        const modelJsonStr = await FileSystem.readAsStringAsync(jsonLocalFilePath);
-        const modelJson = JSON.parse(modelJsonStr);
-        const modelBinB64 = await FileSystem.readAsStringAsync(binLocalFilePath, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        const modelBinArrayBuffer = B64toAB.decode(modelBinB64);
-
-        // Load model details into ModelArtifact
-        const modelArtifacts = {
-          modelTopology: modelJson.modelTopology, // The network architecture
-          weightSpecs: modelJson.weightsManifest[0].weights, // Weight descriptions
-          weightData: modelBinArrayBuffer, // The actual binary weights
-        };
-
-        console.log("ModelArtifact Ready");
-
-        // Use ModelArtifact to load GraphModel
-        model = await tf.loadGraphModel(tf.io.fromMemory(modelArtifacts));
-
-        console.log("GraphModel Loaded");
-
-        // Set state for model loaded
-        setModelLoaded(1);
-      } catch (error) {
-        console.error('Error loading model:', error);
+        await loadModel(); // From your modelLoader
+        setModelReady(true);
+      } catch (e) {
+        console.error('Model failed to load');
       }
     };
-
-    loadModel();
+    checkModel();
   }, []);
 
   const openGallery = async () => {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     let waitTime = 0;
 
-    while (!modelLoaded) {
-      await sleep(100); // Wait for 100ms
-      waitTime += 100;
-      console.log("Loading Model");
-
-      if (waitTime > 120000)
-        break;
+    if (!modelReady) {
+      Alert.alert('Model loading...');
+      return;
     }
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -145,20 +100,6 @@ export default function GalleryScreen() {
   const processImage = async (uri) => {
    startSpinning();
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-    let waitTime = 0;
-
-    while (!modelLoaded) {
-      await sleep(100); // Wait for 100ms
-      waitTime += 100;
-
-      if (waitTime > 120000)
-        break;
-    }
-
-    if (!modelLoaded) {
-      Alert.alert('Model not loaded yet. Please wait...');
-      return;
-    }
 
     try {
       const startTime = performance.now();
@@ -346,16 +287,15 @@ export default function GalleryScreen() {
 
         {/* Middle Content */}
         <View style={styles.middleContent}>
-          {modelLoaded === 1 && imageUri === "" && (
+          {imageUri === "" && (
             <TouchableOpacity style={styles.galleryButton} onPress={openGallery}>
               <Ionicons name="image-outline" size={60} color="#2fa69d" />
               <Text style={styles.galleryButtonText}>Open Gallery</Text>
             </TouchableOpacity>
           )}
 
-          {timeTaken <= 0 && modelLoaded === 0 && <Text style={styles.loadingText}>Loading Model ...... </Text>}
-
-          {timeTaken <= 0 && modelLoaded === 1 && imageUri !== "" && (
+      
+          {timeTaken <= 0 && imageUri !== "" && (
             <View style={styles.detectingContainer}>
               <Animated.View style={{ transform: [{ rotate: spin }] }}>
                 <Ionicons name="sync-circle-outline" size={50} color="#2fa69d" />
@@ -364,7 +304,7 @@ export default function GalleryScreen() {
             </View>
           )}
 
-          {timeTaken <= 0 && modelLoaded === 1 && imageUri === "" && <Text style={styles.loadingText}>Ready to Detect Objects</Text>}
+          {timeTaken <= 0 && imageUri === "" && <Text style={styles.loadingText}>Ready to Detect Objects</Text>}
 
           {imageUri !== "" && (
             <>
@@ -413,9 +353,9 @@ export default function GalleryScreen() {
           <Text style={styles.navText}>Camera</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/realtime')} enabled>
+        <TouchableOpacity style={styles.navButton} onPress={() => router.push('/setting')} enabled>
           <Ionicons name="videocam-outline" size={24} color="white" />
-          <Text style={styles.navText}>Real Time</Text>
+          <Text style={styles.navText}>Setting</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
