@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
 import { getModel, loadModel } from './modelLoader';
+import { useSettings } from './settingsContext';
 
 export default function CameraScreen() {
   const router = useRouter();
@@ -21,6 +22,8 @@ export default function CameraScreen() {
   const [camera, setCamera] = useState(true);
   const [modelReady, setModelReady] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
+
+    const { confidenceThreshold, boxColor } = useSettings();
 
   const isCameraPage = true; // Indicates the current page is the camera page
 
@@ -143,8 +146,9 @@ export default function CameraScreen() {
       const outputTensor = model.predict(preprocessedImageTensor);
       const predictionArray = await outputTensor.array();
 
-      // Choose only prediction more confident threshold than 0.45
-      let confidentDetections: number[][] = predictionArray[0].filter((prediction: number[]) => prediction[4] >= 0.45);
+      // Choose only prediction more confident threshold than set confidence
+      let confidentDetections: number[][] = predictionArray[0].filter((prediction: number[]) => prediction[4] >= confidenceThreshold);
+      console.log("Confidence Threshold: ", confidenceThreshold);
       confidentDetections = confidentDetections.sort((a: number[], b: number[]) => a[4] - b[4]);
 
       // Transform the format of outputTensor into something more usable
@@ -220,9 +224,9 @@ export default function CameraScreen() {
                           return (
                             <React.Fragment key={index}>
                               {/* Bounding Box */}
-                              <Rect x={xStart} y={yStart} width={width} height={height} stroke="red" strokeWidth="2" fill="transparent" />
+                              <Rect x={xStart} y={yStart} width={width} height={height} stroke={boxColor} strokeWidth="2" fill="transparent" />
                               {/* Label */}
-                              <SVGText x={xStart} y={yStart - 5} fill="red" fontSize="14">
+                              <SVGText x={xStart} y={yStart - 5} fill={boxColor} fontSize="14">
                                 Black Bunch ({(confidence * 100).toFixed(1)}%)
                               </SVGText>
                             </React.Fragment>
