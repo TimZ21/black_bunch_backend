@@ -1,57 +1,26 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSettings } from './settingsContext';
 
-// Create context
-interface SettingsContextType {
-  confidenceThreshold: number;
-  setConfidenceThreshold: (value: number) => void;
-  boxColor: string;
-  setBoxColor: (color: string) => void;
-}
-
-export const SettingsContext = createContext<SettingsContextType>({
-  confidenceThreshold: 0.5,
-  setConfidenceThreshold: () => {},
-  boxColor: '#ff0000',
-  setBoxColor: () => {},
-});
-
-// Provider component
-export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
-  const [confidenceThreshold, setConfidenceThreshold] = useState(0.5);
-  const [boxColor, setBoxColor] = useState('#ff0000');
-
-  return (
-    <SettingsContext.Provider 
-      value={{ confidenceThreshold, setConfidenceThreshold, boxColor, setBoxColor }}
-    >
-      {children}
-    </SettingsContext.Provider>
-  );
-};
-
-// Settings screen component
 const SettingsScreen = () => {
-    const { confidenceThreshold, setConfidenceThreshold, boxColor, setBoxColor } = useContext(SettingsContext);
-    const router = useRouter();
-    const [displayValue, setDisplayValue] = useState(confidenceThreshold); // Local
-
+  const router = useRouter();
+  const { confidenceThreshold, setConfidenceThreshold, boxColor, setBoxColor } = useSettings();
+  const [displayValue, setDisplayValue] = useState(confidenceThreshold);
   const isSettingPage = true;
-
 
   const handleSliderComplete = (value: number) => {
     setDisplayValue(value);
-    setConfidenceThreshold(value); // Update context only when released
+    setConfidenceThreshold(value);
     console.log("Confidence Updated:", value);
   };
 
   const handleColorChange = (color: string) => {
     setBoxColor(color);
-    console.log('Bounding Box Color Updated:', color); // Log box color
+    console.log('Bounding Box Color Updated:', color);
   };
 
   return (
@@ -74,15 +43,18 @@ const SettingsScreen = () => {
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Bounding Box Color</Text>
-        
+        <Text style={styles.label}>Bounding Box and Text Color</Text>
         <View style={styles.pickerContainer}>
-          <Picker selectedValue={boxColor} onValueChange={setBoxColor} style={styles.picker} >
+          <Picker selectedValue={boxColor} onValueChange={handleColorChange} style={styles.picker}>
             <Picker.Item label="Red" value="#ff0000" />
             <Picker.Item label="Green" value="#00ff00" />
             <Picker.Item label="Blue" value="#0000ff" />
             <Picker.Item label="Yellow" value="#ffff00" />
             <Picker.Item label="Cyan" value="#00ffff" />
+            <Picker.Item label="White" value="#ffffff" />
+            <Picker.Item label="Silver" value="#c0c0c0" />
+            <Picker.Item label="Gray" value="#808080" />
+            <Picker.Item label="Black" value="#000000" />
           </Picker>
         </View>
       </View>
