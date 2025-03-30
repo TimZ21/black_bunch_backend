@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Switch } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,7 +8,16 @@ import { useSettings } from './settingsContext';
 
 const SettingsScreen = () => {
   const router = useRouter();
-  const { confidenceThreshold, setConfidenceThreshold, boxColor, setBoxColor } = useSettings();
+  const { 
+    confidenceThreshold, 
+    setConfidenceThreshold,
+    boxColor, 
+    setBoxColor,
+    showConfidence, 
+    setShowConfidence,
+    showLabel, 
+    setShowLabel 
+  } = useSettings();
   const [displayValue, setDisplayValue] = useState(confidenceThreshold);
   const isSettingPage = true;
 
@@ -59,6 +68,32 @@ const SettingsScreen = () => {
         </View>
       </View>
 
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Display Object Labels</Text>
+        <View style={styles.toggleContainer}>
+          <Text>Show Labels</Text>
+          <Switch
+            value={showLabel}
+            onValueChange={setShowLabel}
+            trackColor={{ false: "#767577", true: "#2fa69d" }}
+            thumbColor={showLabel ? "#f4f3f4" : "#f4f3f4"}
+          />
+        </View>
+      </View>
+
+      <View style={styles.formGroup}>
+        <Text style={styles.label}>Display Confidence Percentage</Text>
+        <View style={styles.toggleContainer}>
+          <Text>Show Confidence</Text>
+          <Switch
+            value={showConfidence}
+            onValueChange={setShowConfidence}
+            trackColor={{ false: "#767577", true: "#2fa69d" }}
+            thumbColor={showConfidence ? "#f4f3f4" : "#f4f3f4"}
+          />
+        </View>
+      </View>
+
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navButton} onPress={() => router.push('/upload')}>
           <Ionicons name="images-outline" size={24} color="white" />
@@ -79,6 +114,7 @@ const SettingsScreen = () => {
           <Text style={[styles.navText, isSettingPage && styles.disabledText]}>Setting</Text>
         </TouchableOpacity>
       </View>
+      
     </SafeAreaView>
   );
 };
@@ -152,5 +188,16 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     color: '#ccc', // Change text color to indicate the button is disabled
-  }
+  },
+
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
 });

@@ -23,7 +23,7 @@ export default function CameraScreen() {
   const [modelReady, setModelReady] = useState(false);
   const [timeTaken, setTimeTaken] = useState(0);
 
-    const { confidenceThreshold, boxColor } = useSettings();
+    const { confidenceThreshold, boxColor, showConfidence, showLabel } = useSettings();
 
   const isCameraPage = true; // Indicates the current page is the camera page
 
@@ -225,10 +225,26 @@ export default function CameraScreen() {
                             <React.Fragment key={index}>
                               {/* Bounding Box */}
                               <Rect x={xStart} y={yStart} width={width} height={height} stroke={boxColor} strokeWidth="2" fill="transparent" />
-                              {/* Label */}
-                              <SVGText x={xStart} y={yStart - 5} fill={boxColor} fontSize="14">
-                                Black Bunch ({(confidence * 100).toFixed(1)}%)
-                              </SVGText>
+                              {/* Show lable and confidence */}
+                              {showConfidence && showLabel && (
+                                <SVGText x={xStart} y={yStart - 5} fill={boxColor} fontSize="14">
+                                  Black Bunch ({(confidence * 100).toFixed(1)}%)
+                                </SVGText>
+                              )}
+
+                              {/* Only show confidence */}
+                              {showConfidence && !showLabel && (
+                                <SVGText x={xStart} y={yStart - 5} fill={boxColor} fontSize="14">
+                                  {(confidence * 100).toFixed(1)}%
+                                </SVGText>
+                              )}
+
+                              {/* Only show label */}
+                              {!showConfidence && showLabel && (
+                                <SVGText x={xStart} y={yStart - 5} fill={boxColor} fontSize="14">
+                                  Black Bunch
+                                </SVGText>
+                              )}
                             </React.Fragment>
                           );
                         })}
