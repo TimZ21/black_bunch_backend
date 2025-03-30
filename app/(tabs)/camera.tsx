@@ -145,8 +145,8 @@ export default function CameraScreen() {
       const outputTensor = model.predict(preprocessedImageTensor);
       const predictionArray = await outputTensor.array();
 
-      // Choose only prediction more confident than 0.55
-      let confidentDetections: number[][] = predictionArray[0].filter((prediction: number[]) => prediction[4] >= 0.55);
+      // Choose only prediction more confident threshold than 0.45
+      let confidentDetections: number[][] = predictionArray[0].filter((prediction: number[]) => prediction[4] >= 0.45);
       confidentDetections = confidentDetections.sort((a: number[], b: number[]) => a[4] - b[4]);
 
       // Transform the format of outputTensor into something more usable
@@ -183,7 +183,7 @@ export default function CameraScreen() {
 
       const endTime = performance.now();
 
-      setTimeTaken(endTime - startTime);
+      setTimeTaken(Math.round(endTime - startTime));
     } catch (error) {
       console.error('Error running YOLO model:', error);
     }
