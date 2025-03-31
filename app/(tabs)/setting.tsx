@@ -16,7 +16,7 @@ const SettingsScreen = () => {
     showConfidence, 
     setShowConfidence,
     showLabel, 
-    setShowLabel 
+    setShowLabel
   } = useSettings();
   const [displayValue, setDisplayValue] = useState(confidenceThreshold);
   const isSettingPage = true;
@@ -167,11 +167,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    height: 70,
+    height: Platform.select({
+      ios: 80,  // Increased height for iOS
+      android: 70
+    }),
     borderTopWidth: 1,
     borderColor: '#ccc',
     backgroundColor: '#2fa69d',
+    paddingBottom: Platform.select({
+      ios: 10,  // Add bottom padding for iOS home indicator
+      android: 0
+    }),
   },
+  
   navButton: {
     alignItems: 'center',
   },

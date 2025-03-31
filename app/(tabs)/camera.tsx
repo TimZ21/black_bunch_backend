@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import ViewShot from "react-native-view-shot";
 import * as tf from '@tensorflow/tfjs';
@@ -321,7 +321,7 @@ export default function CameraScreen() {
           <View style={styles.middleContent}>
             {imageUri === "" && (
               <TouchableOpacity style={styles.galleryButton} onPress={openCamera}>
-                <Ionicons name="camera-outline" size={60} color="#2fa69d" />
+                <Ionicons name="image-outline" size={60} color="#2fa69d" />
                 <Text style={styles.galleryButtonText}>Open Camera</Text>
               </TouchableOpacity>
             )}
@@ -371,7 +371,7 @@ export default function CameraScreen() {
         {/* Bottom Navigation */}
         <View style={styles.bottomNav}>
           <TouchableOpacity style={styles.navButton} onPress={() => router.push('/upload')} enabled>
-              <Ionicons name="images-outline" size={24} color="white" />
+              <Ionicons name="image-outline" size={24} color="white" />
               <Text style={styles.navText}>Upload</Text>
           </TouchableOpacity>
 
@@ -396,7 +396,9 @@ export default function CameraScreen() {
     container: {
       flex: 1,
       backgroundColor: '#e3fdfb',
+      paddingBottom: 60, 
     },
+
     topContent: {
       alignItems: 'center',
       paddingTop: 20,
@@ -416,6 +418,7 @@ export default function CameraScreen() {
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 20,
+      marginBottom: 70, // Add margin for navigation
     },
     galleryButton: {
       alignItems: 'center',
@@ -443,6 +446,10 @@ export default function CameraScreen() {
         shadowOpacity: 0.15,
         shadowRadius: 3,
         elevation: 3,
+        bottom: Platform.select({
+          ios: 30,  // Increased height for iOS
+          android: 0
+        }),
     },
     saveButtonText: {
         color: '#fff',
@@ -488,11 +495,19 @@ export default function CameraScreen() {
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        height: 70,
+        height: Platform.select({
+          ios: 80,  // Increased height for iOS
+          android: 70
+        }),
         borderTopWidth: 1,
         borderColor: '#ccc',
         backgroundColor: '#2fa69d',
+        paddingBottom: Platform.select({
+          ios: 10,  // Add bottom padding for iOS home indicator
+          android: 0
+        }),
       },
+
     navButton: {
       alignItems: 'center',
     },
@@ -548,6 +563,10 @@ export default function CameraScreen() {
       shadowOpacity: 0.15,
       shadowRadius: 3,
       elevation: 3,
+      bottom: Platform.select({
+        ios: 30,  // Increased height for iOS
+        android: 0
+      }),
     },
 
     reuploadButtonText: {
