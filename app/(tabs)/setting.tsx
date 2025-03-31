@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Switch, Platform } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -54,7 +54,16 @@ const SettingsScreen = () => {
       <View style={styles.formGroup}>
         <Text style={styles.label}>Bounding Box and Text Color</Text>
         <View style={styles.pickerContainer}>
-          <Picker selectedValue={boxColor} onValueChange={handleColorChange} style={styles.picker}>
+          <Picker   
+          selectedValue={boxColor}
+          onValueChange={handleColorChange}
+          style={styles.picker}
+          dropdownIconColor="#000"
+          mode="dropdown" // Force dropdown mode for iOS
+          dropdownIconRippleColor="#2fa69d"
+          numberOfLines={3}
+          itemStyle={styles.pickerItem}
+          >
             <Picker.Item label="Red" value="#ff0000" />
             <Picker.Item label="Green" value="#00ff00" />
             <Picker.Item label="Blue" value="#0000ff" />
@@ -150,17 +159,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 10,
   },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-  },
   bottomNav: {
     position: 'absolute',
     bottom: 0,
@@ -198,6 +196,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#fff',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 20,
+    overflow: 'hidden', // Add this for iOS dropdown
+  },
+  picker: {
+    height: Platform.OS === 'ios' ? 200 : 55, // Taller height for iOS dropdown
+    width: '100%',
+    color: '#000',
+    backgroundColor: '#fff',
+  },
+  pickerItem: {
+    color: '#000',
+    fontSize: 16,
+    height: Platform.OS === 'ios' ? 200 : 55, // Adjust item height for iOS
+    backgroundColor: '#fff', // Ensure white background for items
   },
 });

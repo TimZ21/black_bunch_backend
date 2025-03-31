@@ -47,6 +47,11 @@ const HomeScreen: React.FC = () => {
       style={styles.logo}
       resizeMode="contain"
       />
+            <Image
+      source={require('../../assets/images/AppTitle-noBG.png')} // Adjust the path to your logo.png
+      style={styles.title_img}
+      resizeMode="contain"
+      />
       <Text style={styles.title}></Text>
       <Text style={styles.subtitle}>Black Bunch Detection</Text>
       <Text style={styles.description}>Make informed harvest decisions</Text>
@@ -89,6 +94,11 @@ const styles = StyleSheet.create({
   logo: {
     width: 280, // Adjust the width as needed
     height: 280, // Adjust the height as needed
+    marginBottom: 20, // Space between the logo and the title
+  },
+  title_img: {
+    width: 200, // Adjust the width as needed
+    height: 80, // Adjust the height as needed
     marginBottom: 20, // Space between the logo and the title
   },
   title: {

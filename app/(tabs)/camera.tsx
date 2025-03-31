@@ -321,7 +321,7 @@ export default function CameraScreen() {
           <View style={styles.middleContent}>
             {imageUri === "" && (
               <TouchableOpacity style={styles.galleryButton} onPress={openCamera}>
-                <Ionicons name="image-outline" size={60} color="#2fa69d" />
+                <Ionicons name="camera-outline" size={60} color="#2fa69d" />
                 <Text style={styles.galleryButtonText}>Open Camera</Text>
               </TouchableOpacity>
             )}
@@ -371,7 +371,7 @@ export default function CameraScreen() {
         {/* Bottom Navigation */}
         <View style={styles.bottomNav}>
           <TouchableOpacity style={styles.navButton} onPress={() => router.push('/upload')} enabled>
-              <Ionicons name="image-outline" size={24} color="white" />
+              <Ionicons name="images-outline" size={24} color="white" />
               <Text style={styles.navText}>Upload</Text>
           </TouchableOpacity>
 
@@ -480,15 +480,19 @@ export default function CameraScreen() {
         fontWeight: '500',
       },
 
-    bottomNav: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      height: 70,
-      borderTopWidth: 1,
-      borderColor: '#ccc',
-      backgroundColor: '#2fa69d',
-    },
+      bottomNav: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        height: 70,
+        borderTopWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#2fa69d',
+      },
     navButton: {
       alignItems: 'center',
     },

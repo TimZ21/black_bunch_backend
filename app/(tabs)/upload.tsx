@@ -473,15 +473,19 @@ const styles = StyleSheet.create({
       fontWeight: '500',
     },
 
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    height: 70,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#2fa69d',
-  },
+    bottomNav: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      height: 70,
+      borderTopWidth: 1,
+      borderColor: '#ccc',
+      backgroundColor: '#2fa69d',
+    },
   navButton: {
     alignItems: 'center',
   },
