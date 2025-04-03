@@ -336,7 +336,7 @@ export default function GalleryScreen() {
               {detections.length === 0 && timeTaken > 0 && (
                 <View style={styles.noResultContainer}>
                   <Text style={styles.tryAnotherText}>Please try uploading a clearer image.</Text>
-                  <TouchableOpacity style={styles.reuploadButton} onPress={openGallery}>
+                  <TouchableOpacity style={styles.n_reuploadButton} onPress={openGallery}>
                     <Ionicons name="image-outline" size={20} color="#fff" />
                     <Text style={styles.reuploadButtonText}>UPLOAD</Text>
                   </TouchableOpacity>
@@ -558,6 +558,20 @@ const styles = StyleSheet.create({
       ios: 30,  // Increased height for iOS
       android: 0
     }),
+  },
+
+  n_reuploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#2fa69d',
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 8,
+    shadowColor: '#ff3b2f',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
   },
 
   reuploadButtonText: {
