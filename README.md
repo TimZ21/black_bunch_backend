@@ -1,38 +1,149 @@
 # Welcome to Agrivision 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## **Black Bunch Detection Mobile Application – Project Brief**
 
+The **Black Bunch Detection Mobile Application** is an object detection system designed to identify **black bunches** in oil palm plantations using an optimized **YOLOv5 model**. Developed with **React Native (Expo)** and **TensorFlow.js**, the app allows users—particularly plantation workers and smallholders—to capture or upload images of oil palm trees, detect black bunches with **bounding boxes**, and save results directly to their device gallery. The solution is lightweight and runs entirely **offline** on mobile devices, ensuring functionality in rural areas without internet connectivity.
 
-## How to run our APP
+🏆 **Award**: This project was recognized as the **Best Industry Project** for **COMP2019 (2024–2025)**.
 
-1. Install dependencies
+**Project Repository**: [https://github.com/TimZ21/black_bunch_detection](https://github.com/TimZ21/black_bunch_detection)
 
-   ```bash
-   npm install
-   ```
+--- 
 
-   if not working, use:
-      ```bash
-   npm install --force
-   ```
+## Guide to Install Environment and Run the Black Bunch Detection App
 
-2. Start the app
+This guide will walk you through the steps required to set up your development environment and run the Black Bunch Detection mobile application using Expo and React Native.
 
-   ```bash
-    npx expo start
-   ```
+### 1. **Prerequisites**
 
-In the output, you'll find options to open the app in a
+Before getting started, you’ll need to have the following software installed:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Node.js**: The app uses JavaScript, and Node.js is required to run the development server and install dependencies.
+  - Download Node.js from [https://nodejs.org/](https://nodejs.org/).
+  - Choose the LTS (Long-Term Support) version.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **Expo CLI**: Expo is a framework for building React Native applications. It helps streamline the development and testing process.
+  - Install Expo CLI globally using npm (which comes with Node.js):
+    ```bash
+    npm install -g expo-cli
+    ```
 
+- **Git**: Git is required to clone the project repository.
+  - Install Git from [https://git-scm.com/](https://git-scm.com/).
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **Expo Go App (Optional)**: The Expo Go app is available for testing the app on a physical device.
+  - **iOS**: Available on the App Store.
+  - **Android**: Available on Google Play.
+
+### 2. **Clone the Repository**
+
+Clone the repository containing the project’s source code to your local machine.
+
+```bash
+git clone https://github.com/TimZ21/black_bunch_detection.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd black_bunch_detection
+```
+
+### 3. **Install Dependencies**
+
+Once you have the project files on your local machine, run the following command to install the project’s dependencies:
+
+```bash
+npm install
+```
+
+This command installs all the necessary libraries and packages required to run the app.
+If this command doesn't work, please try:
+```bash
+npm install --force
+```
+
+### 4. **Start the Expo Development Server**
+
+Now that your environment is set up and dependencies are installed, you can start the Expo development server.
+
+To start the app, run the following command:
+
+```bash
+expo start
+```
+or
+```bash
+npx expo start
+```
+This command will open the Expo developer tools in your browser.
+
+### 5. **Run the App on a Device**
+
+#### Option 1: Run on Physical Device using Expo Go
+
+1. **Install Expo Go**:
+   - **iOS**: Download it from the [App Store](https://apps.apple.com/us/app/expo-go/id982107779).
+   - **Android**: Download it from [Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent).
+
+2. **Scan the QR Code**:
+   - In the Expo developer tools (opened automatically in your browser), you will see a QR code.
+   - Open the Expo Go app on your mobile device and scan the QR code. This will load the app on your phone.
+
+#### Option 2: Run on an Emulator/Simulator
+
+1. **For iOS (Mac only)**:
+   - If you’re using a Mac, you can run the app on the iOS Simulator by running the following command:
+     ```bash
+     expo ios
+     ```
+   - This will open the iOS Simulator and automatically run the app.
+
+2. **For Android**:
+   - You can run the app on an Android emulator. First, ensure that you have Android Studio installed.
+   - Launch the Android emulator, and then run the following command:
+     ```bash
+     expo android
+     ```
+
+### 6. **Running the App in Production Mode (Optional)**
+
+For a production build, you may want to run the app in a production-like environment. To do this, you need to create a production build for either Android or iOS.
+
+- **For Android**:
+  ```bash
+  expo build:android
+  ```
+
+- **For iOS**:
+  ```bash
+  expo build:ios
+  ```
+
+Once the build is complete, you will receive a link to download the `.apk` (Android) or `.ipa` (iOS) file for installation.
+
+### 7. **Additional Configuration (Optional)**
+
+If you are working with the codebase and need to modify specific configurations, you can edit the `app.json` file to set custom settings for the app, such as app name, icon, splash screen, and more.
+
+### 8. **Known Issues and Troubleshooting**
+
+- **App not loading on the device**: Make sure your device is on the same Wi-Fi network as your development machine.
+- **Expo Go crashes or freezes**: Try restarting the app on your device or emulator by scanning the QR code again or restarting the app using `expo start`.
+
+### 9. **Dependencies Used in the App**
+
+This project uses the following major dependencies:
+- **TensorFlow.js**: For running the YOLOv5 model.
+- **expo-image-picker**: To allow users to select images for detection.
+- **react-native-svg**: To display bounding boxes on the images.
+- **tensorflow/tfjs-react-native**: For TensorFlow.js compatibility with React Native.
+
+Make sure you have the necessary versions of these dependencies installed by running `npm install`.
+
+---
+
+This guide should help you get started with setting up the environment and running the Black Bunch Detection app using Expo and React Native. If you encounter any issues, please feel free to ask for further clarification or assistance.
 
 # Code Explanation
 ## Expo Software Code:
