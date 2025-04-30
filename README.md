@@ -4,7 +4,7 @@
 
 The **Black Bunch Detection Mobile Application** is an object detection system designed to identify **black bunches** in oil palm plantations using an optimized **YOLOv5 model**. Developed with **React Native (Expo)** and **TensorFlow.js**, the app allows users—particularly plantation workers and smallholders—to capture or upload images of oil palm trees, detect black bunches with **bounding boxes**, and save results directly to their device gallery. The solution is lightweight and runs entirely **offline** on mobile devices, ensuring functionality in rural areas without internet connectivity.
 
-🏆 **Award**: This project was recognized as the **Best Industry Project** for **COMP2019 (2024–2025)**.
+🏆 **Award**: This project was recognized as the **Best Industry Project** for **COMP2019 (2024–2025)** University of Nottingham Malaysia.
 
 **Project Repository**: [https://github.com/TimZ21/black_bunch_detection](https://github.com/TimZ21/black_bunch_detection)
 
