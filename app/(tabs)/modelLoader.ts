@@ -1,12 +1,25 @@
+// Author: Zhang Shuning
+// Purpose: Load and manage a TensorFlow.js model for Black Bunch detection
+// Adapted from: https://github.com/tensorflow/tfjs and https://docs.expo.dev/
+// Description: Loads a YOLOv5 model using tfjs-react-native in an Expo environment,
+//              decodes model files from local assets, and provides access to the loaded model.
+//              Handles model loading from memory to support on-device inference in React Native.
+// Libraries used: @tensorflow/tfjs, expo-file-system, expo-asset, base64-arraybuffer
+
 import * as tf from '@tensorflow/tfjs';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import * as B64toAB from 'base64-arraybuffer';
 
+// Global variables to store the loaded model and loading state
 let model: tf.GraphModel | null = null;
 let loadingPromise: Promise<void> | null = null;
 let isModelLoaded = false;
 
+/**
+ * Loads the TensorFlow.js model from the local assets into memory.
+ * Uses caching and flags to avoid reloading unnecessarily.
+ */
 export const loadModel = async () => {
   if (isModelLoaded) return;
   if (loadingPromise) return loadingPromise;
@@ -61,8 +74,16 @@ export const loadModel = async () => {
   return loadingPromise;
 };
 
+/**
+ * Returns the loaded model instance.
+ * Throws an error if the model is not loaded yet.
+ */
 export const getModel = () => {
   if (!model) throw new Error('Model not loaded');
   return model;
 };
+
+/**
+ * Returns a boolean indicating whether the model is currently loaded.
+ */
 export const checkModelLoaded = () => !!model;

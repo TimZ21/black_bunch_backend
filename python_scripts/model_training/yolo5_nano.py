@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script trains and evaluates a YOLOv5 Nano
 # It configures training settings including dataset path, model type, epochs, batch size, and image size,
 # and runs YOLOv5's train.py and val.py scripts via subprocess for training and validation.

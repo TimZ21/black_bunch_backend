@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script trains and evaluates a YOLOv5 Small
 # It configures training parameters such as dataset path, model size, epochs, batch size, and image size,
 # and uses the YOLOv5 CLI train.py and val.py scripts via subprocess to perform training and validation.

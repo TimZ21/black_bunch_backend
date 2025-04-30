@@ -1,3 +1,6 @@
+// Authors: Zhang Shuning, Sanya, Yi Rou
+// Purpose: Main layout file for the app using Expo Router tabs
+// Adapted from: https://docs.expo.dev/router/introduction/
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';

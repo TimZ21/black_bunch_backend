@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script performs object detection using a trained YOLOv5 small model on a single image.
 # It runs the YOLOv5 detection script via CLI to generate predictions, saves the output with bounding boxes,
 # and displays the resulting image using OpenCV and Matplotlib.

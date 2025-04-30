@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script performs batch object detection using a trained YOLOv5 model to identify and move images containing detected objects.
 # It searches for 'img' folders recursively, runs inference on images in batches, and moves images with detections to a specified output folder.
 # The script uses GPU acceleration, custom confidence thresholds, and parallel preprocessing for efficient processing.

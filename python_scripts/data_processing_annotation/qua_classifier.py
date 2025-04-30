@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # Filter blur images
 # This script classifies images into 'clear' and 'blurred' categories based on blurriness detection using OpenCV.
 # It then trains a Convolutional Neural Network (CNN) model to learn and classify the images automatically.

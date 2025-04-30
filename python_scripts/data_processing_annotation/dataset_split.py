@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script splits a YOLO-formatted dataset into training and validation sets.
 # It organizes images and their corresponding label files into 'train' and 'val' directories under 'images' and 'labels' folders.
 # The split is performed based on a specified ratio (default is 80% train, 20% validation).

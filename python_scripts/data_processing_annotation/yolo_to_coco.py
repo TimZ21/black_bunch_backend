@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script generates COCO-format annotation JSON from a YOLO dataset.
 # It reads images and their corresponding YOLO label files, extracts image metadata, converts bounding box coordinates 
 # from YOLO normalized format to absolute pixel values, and structures them in the COCO dataset format.

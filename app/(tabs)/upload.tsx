@@ -1,3 +1,10 @@
+// Author: Zhang Shuning (Main functionality) Sanya (UI layout, Save Image button) Yi Rou (UI enhancements)
+// Purpose: Image gallery screen for offline Black Bunch detection using YOLOv5 model
+// Adapted from: https://docs.expo.dev/, TensorFlow.js documentation, and various YOLOv5 references
+// Description: Allows users to select an image from the device gallery, performs object detection using a YOLOv5 model,
+//              displays bounding boxes for detected Black Bunches, and provides options to save the annotated image.
+// Libraries used: expo-image-picker, react-native-svg, @tensorflow/tfjs, @tensorflow/tfjs-react-native, react-native-view-shot, expo-media-library
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -243,7 +250,7 @@ export default function GalleryScreen() {
                 );
               };
             }
-
+    // Save Image Button
     const saveImageToGallery = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== 'granted') {

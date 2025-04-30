@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script updates YOLO-format annotation files by changing all occurrences of class ID '1' to '0' to remove the default label and make balack bunch the only label
 # It reads all .txt annotation files from the specified directory, modifies the class labels, and saves the updated files to a new directory.
 import os

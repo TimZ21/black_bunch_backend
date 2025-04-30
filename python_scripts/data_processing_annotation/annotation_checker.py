@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # Used to check the annotation
 # This script visualizes YOLO-format annotations by drawing bounding boxes on corresponding images.
 # It reads an image and its associated annotation file, converts the normalized bounding box coordinates 

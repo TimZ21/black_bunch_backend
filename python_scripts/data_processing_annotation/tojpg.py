@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script converts a single image file (e.g., PNG, WEBP) to JPEG format.
 
 from PIL import Image

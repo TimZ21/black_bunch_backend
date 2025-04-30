@@ -1,3 +1,6 @@
+// Author: Zhang Shuning, Yi Rou, Sanya
+// Purpose: Home screen of the app that serves as the entry point
+//          Loads the detection model and navigates to Upload Screen
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, Image, Animated} from 'react-native';
 import { useRouter } from 'expo-router';
@@ -41,13 +44,14 @@ const HomeScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Add the logo image */}
+      {/*APP logo*/}
       <Image
       source={require('../../assets/images/AgriVisionLogo-noBG.png')} // Adjust the path to your logo.png
       style={styles.logo}
       resizeMode="contain"
       />
-            <Image
+      {/*APP Title*/}
+      <Image
       source={require('../../assets/images/AppTitle-noBG.png')} // Adjust the path to your logo.png
       style={styles.title_img}
       resizeMode="contain"
@@ -56,7 +60,7 @@ const HomeScreen: React.FC = () => {
       <Text style={styles.subtitle}>Black Bunch Detection</Text>
       <Text style={styles.description}>Make informed harvest decisions</Text>
       <Text style={styles.description}>anytime, anywhere</Text>
-      {/* ... existing UI elements ... */}
+      {/* Get Start Button*/}
       <TouchableOpacity
         style={styles.button}
         onPress={handleGetStarted}

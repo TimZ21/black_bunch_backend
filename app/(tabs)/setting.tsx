@@ -1,3 +1,9 @@
+// Author: Zhang Shuning
+// Purpose: Settings screen for adjusting detection and display preferences in the Black Bunch Detection App
+// Description: Provides a UI for users to customize confidence threshold, bounding box color, 
+//              label display, and confidence display options. Uses shared context to sync settings
+//              across the app and includes a bottom navigation bar for quick access to main screens.
+// Libraries used: @react-native-community/slider, @react-native-picker/picker, expo-router, react-native, expo/vector-icons
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Switch, Platform } from 'react-native';
 import Slider from '@react-native-community/slider';
@@ -7,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useSettings } from './settingsContext';
 
 const SettingsScreen = () => {
+  // Routing and settings context access
   const router = useRouter();
   const { 
     confidenceThreshold, 
@@ -18,20 +25,26 @@ const SettingsScreen = () => {
     showLabel, 
     setShowLabel
   } = useSettings();
+  // Local state for temporary slider display
   const [displayValue, setDisplayValue] = useState(confidenceThreshold);
+  // Used to disable the current settings tab in bottom nav
   const isSettingPage = true;
 
+  // Update threshold value when slider movement completes
   const handleSliderComplete = (value: number) => {
     setDisplayValue(value);
     setConfidenceThreshold(value);
     console.log("Confidence Updated:", value);
   };
 
+  // Change bounding box and label text color
   const handleColorChange = (color: string) => {
     setBoxColor(color);
     console.log('Bounding Box Color Updated:', color);
   };
-
+  
+  {/* Main container with safe area padding to avoid notches/status bar.
+    Displays the Settings screen title at the top. */}
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Settings</Text>

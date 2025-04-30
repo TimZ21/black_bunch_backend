@@ -1,3 +1,11 @@
+// Author: Zhang Shuning (Main functionality) Sanya(Save Image Button, UI) Yi Rou(UI)
+// Purpose: Camera capture screen for real-time Black Bunch detection using YOLO model
+// Adapted from: https://docs.expo.dev/ and https://github.com/tensorflow/tfjs
+// Description: Uses TensorFlow.js to run a YOLOv5 model on captured images,
+//               detects 'Black Bunch' in palm fruit images, displays bounding boxes,
+//               and allows saving results to the gallery.
+// Libraries used: expo-image-picker, react-native-svg, tensorflow/tfjs-react-native
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Alert, View, Image, Text, SafeAreaView, Dimensions, TouchableOpacity, StyleSheet, Animated, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -254,7 +262,7 @@ export default function CameraScreen() {
                 );
               };
             }
-
+    // Save Image
     const saveImageToGallery = async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== 'granted') {

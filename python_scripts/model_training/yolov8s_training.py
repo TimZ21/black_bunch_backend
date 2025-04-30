@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script trains and evaluates a YOLOv8 Small
 # It configures training parameters such as dataset path, model version, epochs, batch size, and image size,
 # and performs training and validation directly via the YOLO API with GPU support, dataset caching, and custom output paths.

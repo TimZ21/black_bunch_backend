@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This code is for converting the polygen annotation to the bounding box format that can be used for yolo model training
 # The program will also copy the image without annotaion to the output directory to improve the robustness of the model
 # The images will be moved to a specific folder named "iamges"

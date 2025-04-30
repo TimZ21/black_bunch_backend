@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # This script trains and evaluates a YOLOv5 Large
 # It configures training parameters such as dataset path, model version (YOLOv5l.pt), number of epochs, batch size, and image size.
 # The script uses subprocess to run YOLOv5's train.py and val.py scripts, enables GPU acceleration, dataset caching, and mixed-precision inference for efficiency.

@@ -1,3 +1,4 @@
+# Author: Zhang Shuning
 # Used to check the COCO-format annotation
 # This script visualizes COCO-format annotations by loading an image and its corresponding bounding box annotations.
 # It reads the JSON annotation file, maps image filenames to their IDs, and plots the selected image with bounding boxes 
